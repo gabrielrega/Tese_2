@@ -8,9 +8,15 @@ read_xlsb <- function(x) {
   a <- sqlTables(con)
   sheet <- a$TABLE_NAME[1]
   dado <- sqlFetch(con, sheet, as.is = c(TRUE,TRUE,TRUE,TRUE))
+  odbcCloseAll()
   return (dado)
 }
 
-filenames <- list.files("data/", pattern="*.xlsb", full.names=TRUE)
-ldf <- lapply(filenames, read_xlsb)
-DT <- rbindlist(ldf, fill = TRUE)
+
+# Operação demorada a seguir:
+
+DT <- list.files("data/", pattern="*.xlsb", full.names=TRUE) %>% 
+      lapply(read_xlsb) %>% 
+      rbindlist(fill = TRUE)
+
+save.image()
